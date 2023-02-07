@@ -1,13 +1,13 @@
 import pickle
 import glob
-from ticket import *
-from clear import clear
+from tickett import *
+from clearr import clear
 import json
 import logging
 import os
-from user import User
-from admin import Admin
-from bankAccount import BankAccount
+from usser import User
+from adminn import Admin
+from bank_acc import BankAccount
 from pprint import pprint
 
 logging.basicConfig(filename='app.log', level=logging.INFO,
@@ -56,7 +56,7 @@ class Menu:
         '8' : 'Log out'
         }
 
-    def show_ticket(self, generator):
+    def show_ticket(self):
         temp = []
         for i in enumerate(logged_in_person.show_ticket_list(), 1):
             temp.append(i)
@@ -85,7 +85,7 @@ class Menu:
                 name = input('Enter username: ')
                 password = input('Enter password: ')
                 user_obj = User(name, password)
-                with open(f"users/{user_obj.id}.pickle" , 'wb') as user:
+                with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle" , 'wb') as user:
                     pickle.dump(user_obj, user)
 
                 print('You Are Now Part of METRO')
@@ -100,7 +100,7 @@ class Menu:
                 logged_in_person = None
                 if user_id == 'y':
                     clear()
-                    for file in glob.glob("users/*.pickle"):
+                    for file in glob.glob("C:/Users/DearUser/Desktop/metro-gp/user/*.pickle"):
                         with open(file, 'rb') as user:
                             while True:
                                 try:
@@ -126,7 +126,7 @@ class Menu:
                 # LOGIN FORGET PASSWORD
                 else:
                     try:
-                        with open(f"users/{user_id}.pickle", 'rb') as user:
+                        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_id}.pickle", 'rb') as user:
                             user_obj = pickle.load(user)
 
                         logged_in_person = user_obj
@@ -237,7 +237,7 @@ class Menu:
                             input('C...')
 
                     elif login_user_input == '4':
-                        with open(f'users/{logged_in_person.id}.pickle', 'wb') as user:
+                        with open(f'C:/Users/DearUser/Desktop/metro-gp/user/{logged_in_person.id}.pickle', 'wb') as user:
                             pickle.dump(logged_in_person, user)
                         break
 
@@ -265,7 +265,7 @@ class Menu:
                             name = input('Enter username: ')
                             password = input('Enter password: ')
                             admin_obj = Admin(name, password)
-                            with open(f"admin/{admin_obj.id}.pickle" , 'wb') as admin:
+                            with open(f"C:/Users/DearUser/Desktop/metro-gp/admin/{admin_obj.id}.pickle" , 'wb') as admin:
                                 pickle.dump(admin_obj, admin)
                             print('You Are Now METRO Admin')
                             print(f'Your Metro ID: {admin_obj.id}')

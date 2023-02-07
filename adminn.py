@@ -1,4 +1,7 @@
-from user import User
+from usser import User
+
+import os
+from tickett import *
 
 class Admin(User):
     ticket_list = []

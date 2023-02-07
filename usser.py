@@ -1,7 +1,7 @@
-from bankAccount import BankAccount
+from bank_acc import BankAccount
 import uuid
 import logging
-from ticket import *
+from tickett import *
 
 
 class User:

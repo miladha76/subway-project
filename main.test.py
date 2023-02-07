@@ -1,22 +1,23 @@
 import unittest
 import pickle
 import glob
-from ticket import *
-from clear import clear
+from tickett import *
+from clearr import clear
 import json
 import logging
 import os
-from user import User
-from admin import Admin
-from bankAccount import BankAccount
+from usser import User
+from adminn import Admin
+from bank_acc import BankAccount
+from mainn import Menu
 
 class TestMenu(unittest.TestCase):
     def test_create_new_user(self):
         user_obj = User("TestUser", "TestPassword")
-        with open(f"users/{user_obj.id}.pickle" , 'wb') as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle" , 'wb') as user:
             pickle.dump(user_obj, user)
         
-        with open(f"users/{user_obj.id}.pickle", 'rb') as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle", 'rb') as user:
             loaded_user = pickle.load(user)
         
         self.assertEqual(loaded_user.username, "TestUser")
@@ -24,11 +25,11 @@ class TestMenu(unittest.TestCase):
     
     def test_log_in_as_user(self):
         user_obj = User("TestUser", "TestPassword")
-        with open(f"users/{user_obj.id}.pickle" , 'wb') as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle" , 'wb') as user:
             pickle.dump(user_obj, user)
         
         objects = []
-        for file in glob.glob("users/*.pickle"):
+        for file in glob.glob("C:/Users/DearUser/Desktop/metro-gp/user/*.pickle"):
             with open(file, 'rb') as user:
                 while True:
                     try:
@@ -48,11 +49,11 @@ class TestMenu(unittest.TestCase):
     
     def test_log_in_as_admin(self):
         admin_obj = Admin("TestAdmin", "TestPassword")
-        with open(f"admins/{admin_obj.id}.pickle" , 'wb') as admin:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/admin/{admin_obj.id}.pickle" , 'wb') as admin:
             pickle.dump(admin_obj, admin)
         
         objects = []
-        for file in glob.glob("admins/*.pickle"):
+        for file in glob.glob("C:/Users/DearUser/Desktop/metro-gp/admin/*.pickle"):
             with open(file, 'rb') as admin:
                 while True:
                     try:
@@ -72,16 +73,16 @@ class TestMenu(unittest.TestCase):
     
     def test_deposit(self):
         user_obj = User("TestUser", "TestPassword")
-        with open(f"users/{user_obj.id}.pickle" , 'wb') as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle" , 'wb') as user:
             pickle.dump(user_obj, user)
-        with open(f"users/{user_obj.id}.pickle", "rb") as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle", "rb") as user:
             user_obj = pickle.load(user)
         
         initial_balance = user_obj.balance
         deposit_amount = 100
         user_obj.deposit(deposit_amount)
         
-        with open(f"users/{user_obj.id}.pickle", "rb") as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle", "rb") as user:
             user_obj = pickle.load(user)
         
         self.assertEqual(user_obj.balance, initial_balance + deposit_amount)
@@ -89,11 +90,11 @@ class TestMenu(unittest.TestCase):
     def test_withdraw(self):
         user_obj = User("TestUser", "TestPassword")
         user_obj.deposit(100)
-        with open(f"users/{user_obj.id}.pickle" , 'wb') as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle" , 'wb') as user:
             pickle.dump(user_obj, user)
 
         user_obj.withdraw(50)
-        with open(f"users/{user_obj.id}.pickle" , 'rb') as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle" , 'rb') as user:
             loaded_obj = pickle.load(user)
 
         self.assertEqual(loaded_obj.balance, 50)
@@ -103,7 +104,7 @@ class TestMenu(unittest.TestCase):
     def setUp(self):
         self.menu = Menu()
         self.user = User("test_user", "password")
-        with open(f"users/{self.user.id}.pickle" , 'wb') as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{self.user.id}.pickle" , 'wb') as user:
             pickle.dump(self.user, user)
 
     def test_run(self):
@@ -111,14 +112,14 @@ class TestMenu(unittest.TestCase):
 
     def test_register_user(self):
         user_id = self.user.id
-        with open(f"users/{user_id}.pickle", 'rb') as user:
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_id}.pickle", 'rb') as user:
             user_obj = pickle.load(user)
 
         self.assertEqual(user_obj.username, "test_user")
         self.assertEqual(user_obj.password, "password")
 
     def tearDown(self):
-        os.remove(f"users/{self.user.id}.pickle")
+        os.remove(f"C:/Users/DearUser/Desktop/metro-gp/user/{self.user.id}.pickle")
 
 class TestUser(unittest.TestCase):
     def setUp(self):

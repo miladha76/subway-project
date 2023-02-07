@@ -15,7 +15,7 @@ buy_ticket_menu = {
 
 
 def pickle_tickets(ticket_obj):
-	with open(f"tickets/{ticket_obj.ticket_id}.ticket.pickle" , 'wb') as ticket:
+	with open(f"C:/Users/DearUser/Desktop/metro-gp/tickets/{ticket_obj.ticket_id}.ticket.pickle" , 'wb') as ticket:
 		pickle.dump(ticket_obj, ticket)
 
 class Ticket(ABC):
@@ -74,7 +74,7 @@ class ExpirableTicket(Ticket):
 		return False
 
 	def _delete_ticket(self):
-		file_path = f"tickets/{self.ticket_id}.pickle"
+		file_path = f"C:/Users/DearUser/Desktop/metro-gp/tickets/{self.ticket_id}.pickle"
 		if os.path.isfile(file_path):
 			os.remove(file_path)
 			return "File has been deleted"
@@ -85,7 +85,7 @@ class ExpirableTicket(Ticket):
 		pass
 
 	def _update(self):
-		with open(f"tickets/{self.ticket_id}.ticket.pickle" , 'wb') as ticket:
+		with open(f"C:/Users/DearUser/Desktop/metro-gp/tickets/{self.ticket_id}.ticket.pickle" , 'wb') as ticket:
 			pickle.dump(self, ticket)
 
 	def __repr__(self):
@@ -105,11 +105,11 @@ class ChargebleTicket(Ticket):
 		pass
 
 	def _update(self):
-		with open(f"tickets/{self.ticket_id}.ticket.pickle" , 'wb') as ticket:
+		with open(f"C:/Users/DearUser/Desktop/metro-gp/tickets/{self.ticket_id}.ticket.pickle" , 'wb') as ticket:
 			pickle.dump(self, ticket)
 
 	def _delete_ticket(self):
-		file_path = f"tickets/{self.ticket_id}.pickle"
+		file_path = f"C:/Users/DearUser/Desktop/metro-gp/tickets/{self.ticket_id}.pickle"
 		if os.path.isfile(file_path):
 			os.remove(file_path)
 			return "File has been deleted"
@@ -123,18 +123,18 @@ class ChargebleTicket(Ticket):
 		return f'\tType: Chargeble Ticket\n\tTicket ID: {self.ticket_id}\n\tCredit: {self.balance}'
 
 
-class DisposableTicket(Ticket):
-	def __init__(self):
- 		super().__init__()
- 	    print('print2')
+# class DisposableTicket(Ticket):
+# 	def __init__(self):
+#  		super().__init__()
+#  	    print('print2')
 
-	def use_disposable_ticket(self):
-		self.used = True
+# 	def use_disposable_ticket(self):
+# 		self.used = True
 
-	def expire(self):
-		pass
+# 	def expire(self):
+# 		pass
 
-	def __repr__(self):
-		return f'\tType: Expirable Ticket\n\tTicket ID: {self.ticket_id}\n\tExpiration Date: {self.expiration_date}\n\tCredit: {self.balance}'
+# 	def __repr__(self):
+# 		return f'\tType: Expirable Ticket\n\tTicket ID: {self.ticket_id}\n\tExpiration Date: {self.expiration_date}\n\tCredit: {self.balance}'
 
 
