@@ -3,6 +3,7 @@ from bank_acc import BankAccount
 from usser import User,Admin
 from tickett import *
 
+
 class TestUser(unittest.TestCase):
     def setUp(self):
         self.user = User("test_user", "test_password")
@@ -23,31 +24,31 @@ class TestUser(unittest.TestCase):
         self.assertEqual(self.user.account.balance, 5)
 
     def test_buy_ticket(self):
-        ticket = Ticket(location="New York")
+        ticket = ChargebleTicket(location="New York")
         self.user.buy_ticket(ticket)
         self.assertEqual(len(self.user.ticket_list), 1)
         self.assertEqual(self.user.ticket_list[0].location, "New York")
 
     def test_use_ticket_bynumber(self):
-        ticket = Ticket(location="New York")
+        ticket = ChargebleTicket(location="New York")
         self.user.buy_ticket(ticket)
         self.user.use_ticket_bynumber(1)
         self.assertEqual(len(self.user.ticket_list), 0)
 
     def test_use_ticket_byid(self):
-        ticket = Ticket(location="New York")
+        ticket = ChargebleTicket(location="New York")
         self.user.buy_ticket(ticket)
         self.user.use_ticket_byid(str(ticket.ticket_id))
         self.assertEqual(len(self.user.ticket_list), 0)
 
-    def test_charge_chargeble_ticket(self):
+    def test_charge_chargeable_ticket(self):
         ticket = ChargebleTicket(location="New York")
         self.user.buy_ticket(ticket)
-        self.user.charge_chargeble_ticket(1, 20)
+        self.user.charge_chargeable_ticket(1, 20)
         self.assertEqual(self.user.ticket_list[0].amount_left, 20)
 
     def test_show_ticket_list(self):
-        ticket = Ticket(location="New York")
+        ticket = ChargebleTicket(location="New York")
         self.user.buy_ticket(ticket)
         ticket_list = list(self.user.show_ticket_list())
         self.assertEqual(len(ticket_list), 1)
@@ -56,13 +57,12 @@ class TestUser(unittest.TestCase):
     def test_show_account_information(self):
         self.assertEqual(self.user.show_account_information(),
                          "username:test_user\nuser_id:" + str(self.user.id) + "\n")
-                
 
 class TestAdmin(unittest.TestCase):
     def setUp(self):
         self.admin = Admin('admin', 'password')
         self.user = User("user", "password")
-        self.ticket = Ticket()
+        self.ticket = DisposableTicket()
 
     def test_create_new_admin(self):
         # create_new_admin is not implemented, check it raises NotImplementedError
@@ -115,11 +115,11 @@ class TestAdmin(unittest.TestCase):
 
     def test_delete_ticket_by_id(self):
         # create an admin instance
-        admin = Admin()
+        admin = Admin("admin","password")
 
         # create two tickets
-        ticket1 = Ticket("issue1", "description1")
-        ticket2 = Ticket("issue2", "description2")
+        ticket1 = ChargebleTicket("issue1", "description1")
+        ticket2 = ExpirableTicket("issue2", "description2")
         
         # add the tickets to the admin's ticket list
         admin.add_ticket(ticket1)
@@ -141,8 +141,8 @@ class TestAdmin(unittest.TestCase):
         admin = Admin()
         
         # create two tickets
-        ticket1 = Ticket("issue1", "description1")
-        ticket2 = Ticket("issue2", "description2")
+        ticket1 = ChargebleTicket("issue1", "description1")
+        ticket2 = ExpirableTicket("issue2", "description2")
         
         # add the tickets to the admin's ticket list
         admin.add_ticket(ticket1)
