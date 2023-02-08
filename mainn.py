@@ -1,3 +1,4 @@
+
 import pickle
 import glob
 from tickett import *
@@ -5,21 +6,25 @@ from clearr import clear
 import json
 import logging
 import os
-from usser import User
-from adminn import Admin
+from usser import User, Admin
 from bank_acc import BankAccount
 from pprint import pprint
+from exceptions import *
 
 
-
-logging.basicConfig(filename='app.log', level=logging.INFO,
-                    format='%(asctime)s:%(levelname)s:%(message)s')
+logging.basicConfig(filename='metro.log', level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(name)s %(message)s %(module)s')
+logger = logging.getLogger(__name__)
+error_logger = logging.getLogger('error_logger')
+error_f_h = logging.FileHandler('errors.log')
+error_f_f = logging.Formatter('%(asctime)s - %(message)s %(name)s %(message)s %(module)s')
+error_f_h.setFormatter(error_f_f)
+error_logger.addHandler(error_f_h)
                     
 menu = '''
 __  __      _
 |  \/  | ___| |_ _ __ ___
 | |\/| |/ _ \ __| '__/ _ \
-
 | |  | |  __/ |_| | | (_) |
 |_|  |_|\___|\__|_|  \___/'''
 
@@ -48,22 +53,24 @@ class Menu:
         '5' : 'Charge Charble card'}
 
     admin_menu = {
-        '1' : 'CREATE NEW ADMIN',
-        '2' : 'CREATE TICKET',
-        '3' : 'EDIT TICKETS',
-        '4' : 'CREATE METRO SCHEDULE',
-        '5' : 'EDIT METRO SCHEDULE',
-        '6' : 'BAN USER',
-        '7' : 'DELETE TICKET',
-        '8' : 'Log out'
-        }
+        '1': 'CREATE NEW ADMIN',
+        '2': 'BAN USER',
+        '3': 'TICKET EIDT TOOLS',
+        '4': 'Log out'
+            }
 
-    def show_ticket(self):
+    admin_ticket = {
+        '1': 'CREATE TICKET',
+        '2': 'EDIT TICKETS',
+        '3': 'DELETE TICKET'
+            }
+    def show_ticket(person, generator):
         temp = []
-        for i in enumerate(logged_in_person.show_ticket_list(), 1):
+        for i in enumerate(person.show_ticket_list(), 1):
             temp.append(i)
-        return
+        return temp
 
+    
     @staticmethod
     def run():
         while True:
@@ -86,13 +93,26 @@ class Menu:
                 clear()
                 name = input('Enter username: ')
                 password = input('Enter password: ')
-                user_obj = User(name, password)
-                with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle" , 'wb') as user:
-                    pickle.dump(user_obj, user)
+                try:
+                    user_obj = User(name, password)
+                    with open(f"C:/Users/DearUser/Desktop/metro-gp/user/{user_obj.id}.pickle" , 'wb') as user:
+                        pickle.dump(user_obj, user)
 
-                print('You Are Now Part of METRO')
-                print(f'Your Metro ID: {user_obj.id}')
-                input('C...')
+                    print('You Are Now Part of METRO')
+                    print(f'Your Metro ID: {user_obj.id}')
+                    input('C...')
+
+                except AssertionError as e:
+                    error_logger.error(e)
+                    print(e)
+                except DuplicateUsernameError as k:
+                    error_logger.error(k)
+                    print(k)
+                except SpecialCharError as s:
+                    error_logger.error(s)
+                    print(s)
+                
+                
             # LOGIN
             elif user_input_menu == '2':
                 clear()
@@ -110,11 +130,11 @@ class Menu:
                                     objects.append(content)
                                 except EOFError:
                                     break
-                    # print(objects, type(objects[1].username) )
+                    
                     name = input('Enter username: ')
                     password = input('Enter password: ')
                     for user in objects:
-                        # print(user.username , user.password)
+                      
                         if user.username == name:
                             if user.password == password:
                                 print(f'Your id is:\n{user.id}')
@@ -156,9 +176,21 @@ class Menu:
                             logged_in_person.make_deposit(float(amount))
                             print(logged_in_person.account.balance)
                             input('C...')
+                            logger.info("%s has successfuly deposited %s", logged_in_person.username, amount)
                         # WITHDRAW
                         elif user_input =='2':
-                            pass
+                              clear()
+                              amount = input('The amount you want to Withdraw? ')
+                              input('Shaparak')
+                              try:
+                                logged_in_person.make_withdraw(float(amount))
+                                print(logged_in_person.account.balance)
+                                logger.info("%s has successfuly withdrew %s", logged_in_person.username, amount)
+                                input('C...')
+                              except AssertionError as e:
+                                print(e)
+                                error_logger.error(e)
+                                input()
                         # SHOW BALANCE
                         elif user_input == '3':
                             clear()
@@ -210,14 +242,19 @@ class Menu:
                             charging = int(input('which card would you like to chrage? '))
                             amount = int(input('How much you want to charge your card?\n1.20\n2.30\n3.40\n'))
                             list_of_prices = [20, 30, 40]
-                            logged_in_person.make_withdraw(list_of_prices[amount - 1])
-                            # logged_in_person.ticket_list[charging - 1].charge_ticket(list_of_prices[amount-1])
-                            logged_in_person.charge_chargeble_ticket(charging, list_of_prices[amount - 1])
-
+                            try:
+                                logged_in_person.make_withdraw(list_of_prices[amount - 1])
+                                logged_in_person.charge_chargeble_ticket(charging, list_of_prices[amount - 1])
+                            except AssertionError as e:
+                                error_logger.error(e)
+                                print(e)
+                                input()
                             print(logged_in_person.ticket_list)
+                            c_flag = True
                             input()
-
-
+                        else:
+                            input('Invalid Input...')
+                            
                     elif login_user_input =='3':
                         clear()
                         for i in enumerate(logged_in_person.show_ticket_list(), 1):
@@ -246,47 +283,118 @@ class Menu:
 
             elif user_input_menu == '3':
                 clear()
-                admin_username = input('Enter username: ')
-                admin_password = input('Enter password: ')
+                a = ''' With Great power comes great responsibility'''
+                b = len(a) * '_'
+                print(f"\t{b}\n\n\t{a}\n\t{b}\n")
+                admin_username = input('\tEnter username: ')
+                admin_password = input('\tEnter password: ')
                 admin_objs = []
-                for file in glob.glob("admin/*.pickle"):
-                        with open(file, 'rb') as admin:
-                            while True:
-                                try:
-                                    content = pickle.load(admin)
-                                    admin_objs.append(content)
-                                except EOFError:
-                                    break
-
+                Menu.extract_pickle_files(admin_objs, "admins")
+               
+                logged_in_admin = False
+                the_admin = object
                 for admin in admin_objs:
                     if admin.username == admin_username and admin.password == admin_password:
+                        logged_in_admin = True
+                        the_admin = admin
+
+                if not logged_in_admin:
+                    clear()
+                    print("Are you on drugs?")
+                    input('C...')
+                    continue
+
+                while True:
+                    if logged_in_admin:
+                        clear()
+                        
                         terminal_dictionary_display(Menu.admin_menu)
                         admin_input = input('Choose: ')
 
                         if admin_input == '1':
+                            clear()
                             name = input('Enter username: ')
                             password = input('Enter password: ')
                             admin_obj = Admin(name, password)
-                            with open(f"C:/Users/DearUser/Desktop/metro-gp/admin/{admin_obj.id}.pickle" , 'wb') as admin:
-                                pickle.dump(admin_obj, admin)
+                            admin_obj.save_user()
                             print('You Are Now METRO Admin')
                             print(f'Your Metro ID: {admin_obj.id}')
                             input('C...')
+                        # BAN USER
+                        if admin_input == '2':
+                            clear()
+                            user_id = input("user ID to ban: ")
+                            filename = f'{user_id}.pickle'
+                            try:
+                                user = the_admin.find_user(filename, './users')
+                                print(user ,'\n')
+                                x = input("Are you sure?(y/n)")
+                                authentication = True if x =='y' else False
+                                print(authentication)
+                                if authentication is True:
+                                    the_admin.ban_user(user)
 
-                        elif admin_input == '7':
-                            ticket_id = input('Enter ticket ID')
-                            os.chdir('tickets')
-                            os.system(f'del {ticket_id}.pickle' if os.name =='nt' else f"rm {ticket_id}.pickle")
-                            input()
-                    else:
-                        print("Are you on drugs?")
-                        input('C...')
+                                    print("User banned successfuly!")
+                                    input()
+                                else:
+                                    input()
+                            except IndexError as e:
+                                print("no User found!")
+                                input()
+                            user.update_user()
+
+
+
+                        # CREATE TICKET
+                        elif admin_input == '3':
+                            clear()
+                            terminal_dictionary_display(Menu.admin_ticket)
+                            aticket_input = input('Choose: ')
+
+                            if aticket_input == '1':
+                                ticket_kind = int(input("What kind of ticket do you want me to create?\n1. chargeble\n2. expirable\n3. disposable\n"))
+                                if ticket_kind == 1:
+                                    the_admin.make_ticket(ChargebleTicket())
+                                    print('1', show_ticket(the_admin, the_admin.show_ticket_list()))
+                                    try:
+                                        print(the_admin.show_ticket_list(1))
+
+                                    except IndexError as e:
+                                        print(e)
+                                    input()
+                                elif ticket_kind == 3:
+                                    the_admin.make_ticket(DisposableTicket())
+                                    print(the_admin.ticket_list[-1])
+                                elif ticket_kind == 2:
+                                    the_admin.make_ticket(ExpirableTicket())
+                                    print(the_admin.ticket_list[-1])
+                            elif aticket_input == '2':
+                                print("Do you want to search by ID?")
+                                os.chdir("tickets")
+                                clear()
+                                ticket_id = input("user ID to ban: ")
+                                filename = f'{user_id}.pickle'
+                                ticket = the_admin.find_ticket(filename, './tickets')
+                                print(ticket ,'\n')
+                                x = input("Are you sure?(y/n)")
+                                authentication = True if x =='y' else False
+                                if authentication is True:
+                                    the_admin.ban_user(user)
+                                    input()
+
+                            elif aticket_input == '3':
+                                clear()
+                                ticket_id = input('Enter ticket ID: ')
+                                os.chdir('tickets')
+                                os.system(f'del {ticket_id}.pickle' if os.name == 'nt' else f"rm {ticket_id}.pickle")
+                                input()
+
+                        elif admin_input == '4':
+                            the_admin.update_user()
+                            break
 
             elif user_input_menu == '4':
                 break
-
 if __name__ == '__main__':
     Menu.run()
-
-
 

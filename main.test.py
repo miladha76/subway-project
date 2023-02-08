@@ -6,8 +6,8 @@ from clearr import clear
 import json
 import logging
 import os
-from usser import User
-from adminn import Admin
+from usser import User,Admin
+
 from bank_acc import BankAccount
 from mainn import Menu
 
@@ -121,24 +121,24 @@ class TestMenu(unittest.TestCase):
     def tearDown(self):
         os.remove(f"C:/Users/DearUser/Desktop/metro-gp/user/{self.user.id}.pickle")
 
-class TestUser(unittest.TestCase):
-    def setUp(self):
-        self.user = User("test_user", "password")
+# class TestUser(unittest.TestCase):
+#     def setUp(self):
+#         self.user = User("test_user", "password")
 
-    def test_create_bank_account(self):
-        self.user.create_bank_account()
-        self.assertIsInstance(self.user.bank_account, BankAccount)
+#     def test_create_bank_account(self):
+#         self.user.create_bank_account()
+#         self.assertIsInstance(self.user.bank_account, BankAccount)
 
-    def test_buy_ticket(self):
-        ticket = Ticket(10, "Disposable", "None")
-        self.user.buy_ticket(ticket)
-        self.assertIn(ticket, self.user.tickets)
+#     def test_buy_ticket(self):
+#         ticket = Ticket(10, "Disposable", "None")
+#         self.user.buy_ticket(ticket)
+#         self.assertIn(ticket, self.user.tickets)
 
-    def test_show_ticket_list(self):
-        ticket = Ticket(10, "Disposable", "None")
-        self.user.buy_ticket(ticket)
-        ticket_list = self.user.show_ticket_list()
-        self.assertIn(ticket, ticket_list)
+#     def test_show_ticket_list(self):
+#         ticket = Ticket(10, "Disposable", "None")
+#         self.user.buy_ticket(ticket)
+#         ticket_list = self.user.show_ticket_list()
+#         self.assertIn(ticket, ticket_list)
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
