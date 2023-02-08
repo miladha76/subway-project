@@ -1,11 +1,11 @@
 import unittest
 import uuid
-import datetime
+from datetime import datetime, timedelta
 import os
 import pickle
 from unittest import mock
 
-from tickett import Ticket, ExpirableTicket, ChargebleTicket
+from tickett import Ticket, ExpirableTicket, ChargebleTicket,DisposableTicket
 
 class TestTicket(unittest.TestCase):
 	def setUp(self):
@@ -31,6 +31,11 @@ class TestTicket(unittest.TestCase):
 		self.assertIsNotNone(self.chargeble_ticket.ticket_id)
 		self.assertIsInstance(self.chargeble_ticket.creation_date, datetime.datetime)
 		self.assertEqual(self.chargeble_ticket.balance, 50)
+
+	# def test_use_chargeble_ticket(self):
+    # 	self.ticket.charge_ticket(50)
+    #     self.ticket.use_ticket()
+    #     self.assertEqual(self.ticket.balance, 40)
 
 	def test_use_ticket_ExpirableTicket(self):
 		self.expirable_ticket.use_ticket()
@@ -93,8 +98,37 @@ def test_expirable_ticket_expire(self, mock_remove):
             ticket.expire()
         mock_remove.assert_called_once_with(file_path)
 
-if __name__ == "__main__":
+
+
+
+class TestDisposableTicket(unittest.TestCase):
+    def test_use_ticket(self):
+        ticket = DisposableTicket()
+        ticket.use_ticket()
+        self.assertEqual(ticket.balance, 40)
+        
+    def test_check_expiration(self):
+        ticket = DisposableTicket()
+        ticket.expiration_date = datetime.now() - timedelta(days=1)
+        result = ticket.check_expiration()
+        self.assertTrue(result)
+        self.assertFalse(os.path.isfile(f"C:/Users/DearUser/Desktop/metro-gp/tickets/{ticket.ticket_id}.pickle"))
+        
+    def test__delete_ticket(self):
+        ticket = DisposableTicket()
+        ticket_id = ticket.ticket_id
+        file_path = f"C:/Users/DearUser/Desktop/metro-gp/tickets/{ticket_id}.pickle"
+        ticket._delete_ticket()
+        self.assertFalse(os.path.isfile(file_path))
+        
+    def test__update(self):
+        ticket = DisposableTicket()
+        balance = ticket.balance
+        ticket.balance += 10
+        ticket._update()
+        with open(f"C:/Users/DearUser/Desktop/metro-gp/tickets/{ticket.ticket_id}.ticket.pickle", 'rb') as ticket_file:
+            updated_ticket = pickle.load(ticket_file)
+        self.assertEqual(updated_ticket.balance, balance + 10)
+
+if __name__ == '__main__':
     unittest.main()
-
-
-
