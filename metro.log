@@ -6,3 +6,5 @@
 2023-02-08 00:30:59,314 ERROR error_logger Length must be between 8 and 16 mainn
 2023-02-08 00:32:32,844 INFO root User instance created: name=babak, id=UUID('21d7493a-a78b-11ed-a1c2-c01850011082') usser
 2023-02-08 00:33:03,235 INFO root User instance created: name=vida, id=UUID('33f52eab-a78b-11ed-9199-c01850011082') usser
+2023-02-14 07:36:21,234 INFO root User instance created: name=hamid, id=UUID('54d25c44-ac7d-11ed-993c-c01850011082') usser
+2023-02-14 07:39:48,882 INFO __main__ hamid has successfuly deposited 1000 mainn

@@ -33,15 +33,15 @@ class User:
     def password(self):
         return self.__password
 
-    @password.setter
-    def password(self, newpass):
-        self.validate_password(newpass)
-        self.__password = newpass
+    # @password.setter
+    # def password(self, newpass):
+    #     self.validate_password(newpass)
+    #     self.__password = newpass
 
-    def reset_password(self):
-        npass = self.security()
-        if npass:
-            self._password = npass
+    # def reset_password(self):
+    #     npass = self.security()
+    #     if npass:
+    #         self._password = npass
 
     def make_deposit(self, amount):
         self.account.deposit(amount)
@@ -122,7 +122,7 @@ class Admin(User):
             ticket = pickle.load(f)
         return ticket
 
-    def save_user(self, path="admins"):
+    def save_user(self, path="C:/Users/DearUser/Desktop/metro-gp/admin"):
         with open(f"{path}/{self.id}.pickle", 'wb') as user:
             pickle.dump(self, user)
 
